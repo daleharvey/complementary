@@ -1,0 +1,17 @@
+{
+  "short_name": "Complementary",
+  "name": "Complementary Colour Picker",
+  "icons": [
+    {
+      "src": "/static/icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#000000",
+  "description": "Complementary Colour Picker"
+}
