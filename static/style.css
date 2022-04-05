@@ -28,7 +28,7 @@ header {
 h1 {
   font-size: 1.2em;
   text-indent: 20px;
-  background: url(/static/icon.png) no-repeat center left;
+  background: url(../static/icon.png) no-repeat center left;
   background-size: 16px;
 }
 
