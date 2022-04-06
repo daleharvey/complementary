@@ -19,7 +19,14 @@ let constraints = {
   }
 };
 
-let arrToRGB = arr => `rgb(${arr[0]}, ${arr[1]}, ${arr[2]}`;
+let arrToRGB = arr =>
+  `rgb(${arr[0]}, ${arr[1]}, ${arr[2]}`;
+
+let toHex = c =>
+  c.toString(16).padStart(2, "0");
+
+let rgbToHex = ([r, g, b]) =>
+  `#${toHex(r)}${toHex(g)}${ toHex(b)}`;
 
 let createCanvasFrame = ()  => {
   let canvas = document.createElement("canvas");
@@ -48,24 +55,54 @@ let pickFrameColours = async () => {
   let colours = [
     swatches.Vibrant.getRgb(),
     swatches.Muted.getRgb(),
-    selectedColour || swatches.DarkVibrant.getRgb()
+    swatches.DarkVibrant.getRgb(),
   ];
 
-  ["first", "second", "third"].map((pos, i) => {
-    $(`#colours .${pos}`).style.backgroundColor = arrToRGB(colours[i]);
-    $(`#complementary .${pos}`).style.backgroundColor =
-      arrToRGB(complementryRGBColor(...colours[i]));
+  if (selectedColour) {
+    colours.push(selectedColour);
+  }
+
+  ["first", "second", "third", "fourth"].map((pos, i) => {
+
+    let colour = $(`#colours .${pos}`);
+
+    if (!colours[i]) {
+      colour.classList.add("prompt");
+      colour.innerText = "Click to pick colour";
+      return;
+    }
+
+    colour.classList.remove("prompt");
+    let complement = complementryRGBColor(...colours[i]);
+
+    //let colour = $(`#colours .${pos}`);
+    colour.innerText = rgbToHex(colours[i]);
+    colour.style.color = idealTextColor(colours[i]);
+    colour.style.backgroundColor = arrToRGB(colours[i]);
+
+    let comp = $(`#complementary .${pos}`);
+    comp.innerText = rgbToHex(complement);
+    comp.style.color = idealTextColor(complement);
+    comp.style.backgroundColor = arrToRGB(complement);
   });
 };
+
+let idealTextColor = ([r, g, b]) => {
+  let nThreshold = 105;
+  var bgDelta = (r * 0.299) + (g * 0.587) + (b * 0.114);
+  return ((255 - bgDelta) < nThreshold) ? "#000000" : "#ffffff";
+}
+
+let getColorByBgColor = bg =>
+  (parseInt(bg.replace("#", ""), 16) > 0xffffff / 2) ? "#000" : "#fff";
 
 let start = async () => {
   let stream = await navigator.mediaDevices.getUserMedia(constraints);
   video.srcObject = stream;
-  video.play();
   setInterval(pickFrameColours, 1000);
 };
 
-let click = evt => {
+let clickVideo = evt => {
   let offset = evt.target.getBoundingClientRect();
   let x = evt.clientX - offset.left;
   let y = evt.clientY - offset.top;
@@ -90,7 +127,22 @@ let click = evt => {
     .getImageData(x, y, 1, 1).data;
 }
 
-video.addEventListener("click", click);
+let copyColour = e => {
+  if (/#[0-9A-Fa-f]{6}\b/.test(e.target.innerText)) {
+    navigator.clipboard.writeText(e.target.innerText);
+  }
+}
+
+let pause = () => {
+  video.paused ? video.play() : video.pause();
+  $("#pause").classList.toggle("paused", video.paused);
+}
+
+video.addEventListener("click", clickVideo);
+
+$("#colours").addEventListener("click", copyColour);
+$("#complementary").addEventListener("click", copyColour);
+$("#pause").addEventListener("click", pause);
 
 start();
 

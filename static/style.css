@@ -43,6 +43,9 @@ header a {
 
 header div {
   height: 100%;
+  display: flex;
+  flex-grow: 1;
+  justify-content: end;
 }
 
 header a:hover {
@@ -57,7 +60,33 @@ header a svg {
 #menu {
   margin-bottom: 1em;
   overflow: hidden;
+  position: relative;
 }
+
+#pause {
+  width: 2em;
+  height: 2em;
+  background: rgba(0, 0, 0, .2) url(../static/pause.svg) center 0.6em no-repeat;
+  background-size: 50%;
+  text-indent: -999px;
+  border: 0;
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  cursor: pointer;
+  opacity: .5;
+}
+
+#pause.paused {
+  background-image: url(../static/play.svg);
+  background-size: 90%;
+  background-position-y: .3em;
+}
+
+#pause:hover {
+  opacity: .8;
+}
+
 
 video {
   width: 100%;
@@ -72,8 +101,18 @@ video {
 }
 
 .bar div {
-  flex-grow: 1;
+  flex: 1;
+  padding: 1em;
+  display: flex;
   aspect-ratio: 2 / 1;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  mix-blend-mode: difference;
 }
 
 .bar div:nth-child(1) {
@@ -90,4 +129,9 @@ video {
 
 #colours {
   margin-bottom: 1em;
+}
+
+div.prompt {
+  cursor: unset;
+  font-size: small;
 }
