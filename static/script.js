@@ -1,6 +1,6 @@
 let $ = document.querySelector.bind(document);
+
 let video = $("video");
-let colorThief = new ColorThief();
 let selectedColour = null;
 
 let constraints = {
@@ -41,20 +41,27 @@ let takeFrame = async () => {
 
 let pickFrameColours = async () => {
   let frame = await takeFrame();
-  let colours = colorThief.getPalette(frame, 3);
-  if (selectedColour) {
-    colours[2] = selectedColour;
-  }
+
+  let vibrant = new Vibrant(frame);
+  let swatches = vibrant.swatches();
+
+  let colours = [
+    swatches.Vibrant.getRgb(),
+    swatches.Muted.getRgb(),
+    selectedColour || swatches.DarkVibrant.getRgb()
+  ];
+
   ["first", "second", "third"].map((pos, i) => {
     $(`#colours .${pos}`).style.backgroundColor = arrToRGB(colours[i]);
     $(`#complementary .${pos}`).style.backgroundColor =
       arrToRGB(complementryRGBColor(...colours[i]));
-  })
+  });
 };
 
 let start = async () => {
   let stream = await navigator.mediaDevices.getUserMedia(constraints);
   video.srcObject = stream;
+  video.play();
   setInterval(pickFrameColours, 1000);
 };
 

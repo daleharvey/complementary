@@ -23,6 +23,7 @@ header {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1em;
+  height: 2em;
 }
 
 h1 {
@@ -35,8 +36,13 @@ h1 {
 header a {
   color: #555555;
   display: inline-block;
-  width: 15px;
-  margin: 5px;
+  height: 100%;
+  aspect-ratio: 1/1;
+  padding: .3em;
+}
+
+header div {
+  height: 100%;
 }
 
 header a:hover {
@@ -45,6 +51,7 @@ header a:hover {
 
 header a svg {
   overflow: visible;
+  margin-top: -4px;
 }
 
 #menu {
@@ -56,6 +63,7 @@ video {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
+  cursor: pointer;
 }
 
 .bar {
