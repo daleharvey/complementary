@@ -59,12 +59,17 @@ let updateSwatch = async () => {
     swatches.Muted.getRgb(),
     swatches.DarkVibrant.getRgb(),
     swatches.DarkMuted.getRgb(),
-    swatches.LightVibrant.getRgb(),
+    swatches.LightVibrant?.getRgb(),
   ];
 
   [...Array(5)].map((pos, i) => {
 
     let colourObj = userColours[i] || colours[i];
+
+    if (!colourObj) {
+      return;
+    }
+
     let column = $(`#swatch .column:nth-child(${ i + 1})`);
 
     column.classList.toggle("userSelected", !!userColours[i]);
@@ -103,6 +108,16 @@ let clickVideo = evt => {
   let x = evt.clientX - offset.left;
   let y = evt.clientY - offset.top;
 
+  let target = document.createElement("div");
+  target.classList.add("target");
+  target.style.top = `${y - 5}px`;
+  target.style.left = `${x - 5}px`;
+  $("#menu").appendChild(target);
+  setTimeout(() => {
+    target.addEventListener("transitionend", target.remove);
+    target.classList.add("expand");
+  });
+
   // We use 'object-fit' on the video player which we can't use
   // when getting pixel data so we need to rescale the image
   // and add offsets for when parts of the image are clipped.
@@ -128,6 +143,9 @@ let clickVideo = evt => {
 let swatchClicked = e => {
   if (e.target.nodeName === "DIV" && /#[0-9A-Fa-f]{6}\b/.test(e.target.innerText)) {
     navigator.clipboard.writeText(e.target.innerText);
+    $("#toast .copied").innerText = e.target.innerText;
+    $("#toast").classList.add("display");
+    setTimeout(() => $("#toast").classList.remove("display"), 1000);
     return;
   }
   if (e.target.nodeName === "BUTTON") {
