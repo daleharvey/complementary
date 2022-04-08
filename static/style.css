@@ -151,7 +151,7 @@ div.prompt {
 
 #swatch .column div {
   text-align: center;
-  padding: 1.5em;
+  padding: 1.5em 0;
   text-transform: uppercase;
   cursor: pointer;
   height: 4em;

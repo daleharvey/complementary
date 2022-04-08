@@ -2,7 +2,7 @@ let $ = document.querySelector.bind(document);
 
 let video = $("video");
 
-let selectedIndex = 5;
+let selectedIndex = 4;
 let userColours = [];
 
 let constraints = {
@@ -58,7 +58,6 @@ let updateSwatch = async () => {
     swatches.Vibrant.getRgb(),
     swatches.Muted.getRgb(),
     swatches.DarkVibrant.getRgb(),
-    swatches.DarkMuted.getRgb(),
     swatches.LightVibrant?.getRgb(),
   ];
 
