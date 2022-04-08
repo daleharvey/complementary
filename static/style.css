@@ -142,6 +142,7 @@ div.prompt {
 #swatch .column {
   flex: 1;
   border-bottom: 2px solid transparent;
+  overflow: hidden;
 }
 
 #swatch .column.selected {
@@ -150,9 +151,10 @@ div.prompt {
 
 #swatch .column div {
   text-align: center;
-  padding: 1em;
+  padding: 1.5em;
   text-transform: uppercase;
   cursor: pointer;
+  height: 4em;
 }
 
 #swatch .column button {
@@ -173,4 +175,56 @@ div.prompt {
 #swatch .column.userSelected button {
   background-image: url(../static/clear.svg);
   background-size: 30%;
+}
+
+#toast {
+  background: #FEFEFE;
+  border: .5px solid #BBB;
+  border-radius: 40px;
+  position: absolute;
+  top: 20px;
+  padding: .5em;
+  font-size: small;
+  display: flex;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  width: fit-content;
+  z-index: 1;
+  transform: translateY(-100px);
+  transition: transform .5s;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+#toast.display {
+  transform: translateY(0);
+}
+
+.tick {
+  background: lightgreen;
+  width: 16px;
+  height: 16px;
+  border-radius: 16px;
+  display: block;
+  text-align: center;
+  color: white;
+  margin-right: .5em;
+}
+
+.copied {
+  font-weight: bold;
+}
+
+.target {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50px;
+  background:rgba(255, 255, 255, .3);
+  transition: transform 1s, opacity 1s;
+}
+
+.expand {
+  transform: scale(4);
+  opacity: 0;
 }
