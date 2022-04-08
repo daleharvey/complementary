@@ -1,7 +1,9 @@
 let $ = document.querySelector.bind(document);
 
 let video = $("video");
-let selectedColour = null;
+
+let selectedIndex = 5;
+let userColours = [];
 
 let constraints = {
   video: {
@@ -46,7 +48,7 @@ let takeFrame = async () => {
   })
 }
 
-let pickFrameColours = async () => {
+let updateSwatch = async () => {
   let frame = await takeFrame();
 
   let vibrant = new Vibrant(frame);
@@ -56,31 +58,25 @@ let pickFrameColours = async () => {
     swatches.Vibrant.getRgb(),
     swatches.Muted.getRgb(),
     swatches.DarkVibrant.getRgb(),
+    swatches.DarkMuted.getRgb(),
+    swatches.LightVibrant.getRgb(),
   ];
 
-  if (selectedColour) {
-    colours.push(selectedColour);
-  }
+  [...Array(5)].map((pos, i) => {
 
-  ["first", "second", "third", "fourth"].map((pos, i) => {
+    let colourObj = userColours[i] || colours[i];
+    let column = $(`#swatch .column:nth-child(${ i + 1})`);
 
-    let colour = $(`#colours .${pos}`);
+    column.classList.toggle("userSelected", !!userColours[i]);
 
-    if (!colours[i]) {
-      colour.classList.add("prompt");
-      colour.innerText = "Click to pick colour";
-      return;
-    }
+    let colour = column.querySelector("div");
+    let complement = complementryRGBColor(...colourObj);
 
-    colour.classList.remove("prompt");
-    let complement = complementryRGBColor(...colours[i]);
+    colour.innerText = rgbToHex(colourObj);
+    colour.style.color = idealTextColor(colourObj);
+    colour.style.backgroundColor = arrToRGB(colourObj);
 
-    //let colour = $(`#colours .${pos}`);
-    colour.innerText = rgbToHex(colours[i]);
-    colour.style.color = idealTextColor(colours[i]);
-    colour.style.backgroundColor = arrToRGB(colours[i]);
-
-    let comp = $(`#complementary .${pos}`);
+    let comp = column.querySelector(" div:nth-child(2)");
     comp.innerText = rgbToHex(complement);
     comp.style.color = idealTextColor(complement);
     comp.style.backgroundColor = arrToRGB(complement);
@@ -99,7 +95,7 @@ let getColorByBgColor = bg =>
 let start = async () => {
   let stream = await navigator.mediaDevices.getUserMedia(constraints);
   video.srcObject = stream;
-  setInterval(pickFrameColours, 1000);
+  setInterval(updateSwatch, 1000);
 };
 
 let clickVideo = evt => {
@@ -122,14 +118,31 @@ let clickVideo = evt => {
   y = y * (1 / scale);
   x = x * (1 / scale);
 
-  selectedColour = createCanvasFrame()
+  userColours[selectedIndex - 1] = createCanvasFrame()
     .getContext("2d")
     .getImageData(x, y, 1, 1).data;
+
+  updateSwatch();
 }
 
-let copyColour = e => {
-  if (/#[0-9A-Fa-f]{6}\b/.test(e.target.innerText)) {
+let swatchClicked = e => {
+  if (e.target.nodeName === "DIV" && /#[0-9A-Fa-f]{6}\b/.test(e.target.innerText)) {
     navigator.clipboard.writeText(e.target.innerText);
+    return;
+  }
+  if (e.target.nodeName === "BUTTON") {
+    selectedIndex = Array.prototype.indexOf.call(
+      e.target.parentNode.parentNode.children,
+      e.target.parentNode
+    ) + 1;
+    if (userColours[selectedIndex - 1]) {
+      delete userColours[selectedIndex - 1];
+      updateSwatch();
+    } else {
+      $(".selected")?.classList.remove("selected");
+      $(`#swatch .column:nth-child(${selectedIndex})`).classList.add("selected");
+    }
+    return;
   }
 }
 
@@ -139,10 +152,8 @@ let pause = () => {
 }
 
 video.addEventListener("click", clickVideo);
-
-$("#colours").addEventListener("click", copyColour);
-$("#complementary").addEventListener("click", copyColour);
 $("#pause").addEventListener("click", pause);
+$("#swatch").addEventListener("click", swatchClicked);
 
 start();
 
